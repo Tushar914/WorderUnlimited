@@ -31,7 +31,8 @@ async function fetchText() {
         array[i] = array[i].trim();
     }
     allWords = new Set(array);
-    secretWord = array[Math.floor(Math.random() * array.length)].trim();
+    // secretWord = array[Math.floor(Math.random() * array.length)].trim();
+    secretWord = "silty"
 }
 
 function insertLetterInColumn(key, func) {
@@ -80,23 +81,22 @@ function verifyWord(letterArray, currentWord) {
     if (currentWord === secretWord) {
         showSnackbar('Congrats! You guessed it.', 'show-success');
         gameOver = true;
-    }
-
-    if (tdTotalCount == 30) {
-        showSnackbar('You lost! The secret word is <strong>' + secretWord + '<strong>', 'show-danger');
+    } else if (tdTotalCount == 30) {
+        showSnackbar('You lost! The secret word is <strong>' + secretWord.toUpperCase() + '<strong>', 'show-danger');
         gameOver = true;
     }
 
     for (var i = tdMaxCount; i < tdMaxCount + currentWord.length; i++) {
-
         if (secretWord[i - tdMaxCount] == currentWord[i - tdMaxCount]) {
             letterArray[i].classList.add("correct");
-        } else if (secretWord.indexOf(new Set(currentWord[i - tdMaxCount])) != -1) {
-            letterArray[i].classList.add("position");
+        } else if (secretWord.indexOf(currentWord[i - tdMaxCount]) != -1) {
+            //check for repeating letters
+            if (!new Set(currentWord.substring(0, i - tdMaxCount)).has(currentWord[i - tdMaxCount])) {
+                letterArray[i].classList.add("position");
+            }
         } else {
             letterArray[i].classList.add("wrong");
         }
-
     }
 }
 
