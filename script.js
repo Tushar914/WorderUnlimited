@@ -1,10 +1,10 @@
 let tdColumnCount = 0;
 let tdTotalCount = 0;
 let tdMaxCount = 0;
-let wordSubmitted = false;
 let secretWord = "";
 let gameOver = false;
 let currentWord = "";
+let allWords;
 
 const myHeaders = new Headers();
 myHeaders.append('Acces-Control-Allow-Origin', '*');
@@ -24,40 +24,53 @@ async function fetchJSON() {
 }
 
 async function fetchText() {
-    let response = await fetch('./selectedWordList.txt');
+    let response = await fetch('./selectedWordList2.txt');
     let words = await response.text();
     const array = words.split("\n");
-    secretWord = array[Math.floor(Math.random() * array.length)].toUpperCase().trim();
-    //console.log("Secret word: " + secretWord);
+    for (var i = 0; i < array.length; i++) {
+        array[i] = array[i].trim();
+    }
+    allWords = new Set(array);
+    secretWord = array[Math.floor(Math.random() * array.length)].trim();
 }
 
 function insertLetterInColumn(key, func) {
     let letter = document.getElementsByClassName('letter');
+    let messageBox = document.getElementById("message-box");
 
     if (func == 'submit') {
+        if (tdColumnCount != 5) {
+            showSnackbar('Not a 5 letter word', 'show-danger');
+            return;
+        }
+
+        if (!allWords.has(currentWord)) {
+            showSnackbar('Not a valid word', 'show-danger');
+            return;
+        }
         if (tdColumnCount == 5) {
-            console.log("max count: " + tdMaxCount)
             verifyWord(letter, currentWord);
             tdMaxCount = tdTotalCount;
             tdColumnCount = 0
             currentWord = ""
-        } else {
-            alert("Current word is not 5 letters long");
         }
     }
 
     if (func == 'valid') {
         if (tdColumnCount < 5) {
             letter[tdTotalCount].innerHTML = key.toUpperCase();
-            currentWord += key.toUpperCase();
+            currentWord += key.toLowerCase();
             tdTotalCount += 1;
             tdColumnCount += 1;
         }
     }
 
     if (func == 'remove') {
-        if (tdColumnCount > 0) tdColumnCount -= 1;
-        if ((tdTotalCount > 0) && (tdTotalCount > tdMaxCount)) tdTotalCount -= 1;
+        if (tdColumnCount > 0)
+            tdColumnCount -= 1;
+
+        if ((tdTotalCount > 0) && (tdTotalCount > tdMaxCount))
+            tdTotalCount -= 1;
         letter[tdTotalCount].innerHTML = "";
         currentWord = currentWord.substring(0, currentWord.length - 1);
     }
@@ -65,23 +78,33 @@ function insertLetterInColumn(key, func) {
 
 function verifyWord(letterArray, currentWord) {
     if (currentWord === secretWord) {
-        alert("Congratulations! Thats the correct word");
+        showSnackbar('Congrats! You guessed it.', 'show-success');
         gameOver = true;
     }
 
     if (tdTotalCount == 30) {
-        alert("You lost! Correct word was: " + secretWord);
+        showSnackbar('You lost! The secret word is <strong>' + secretWord + '<strong>', 'show-danger');
         gameOver = true;
     }
 
     for (var i = tdMaxCount; i < tdMaxCount + currentWord.length; i++) {
-        //console.log("secretWord[" + (i - tdMaxCount) + "]: " + secretWord[i - tdMaxCount] + " | currentWord[" + (i - tdMaxCount) + "]: " + currentWord[i - tdMaxCount]);
+
         if (secretWord[i - tdMaxCount] == currentWord[i - tdMaxCount]) {
             letterArray[i].classList.add("correct");
-        } else if (secretWord.indexOf(currentWord[i - tdMaxCount]) != -1) {
+        } else if (secretWord.indexOf(new Set(currentWord[i - tdMaxCount])) != -1) {
             letterArray[i].classList.add("position");
+        } else {
+            letterArray[i].classList.add("wrong");
         }
+
     }
+}
+
+function showSnackbar(err, sbClass) {
+    var snackbar = document.getElementById("snackbar");
+    snackbar.innerHTML = err;
+    snackbar.className = sbClass;
+    setTimeout(function() { snackbar.className = snackbar.className.replace(sbClass, ""); }, 3000);
 }
 
 fetchText();
