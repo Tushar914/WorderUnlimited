@@ -31,8 +31,7 @@ async function fetchText() {
         array[i] = array[i].trim();
     }
     allWords = new Set(array);
-    // secretWord = array[Math.floor(Math.random() * array.length)].trim();
-    secretWord = "silty"
+    secretWord = array[Math.floor(Math.random() * array.length)].trim();
 }
 
 function insertLetterInColumn(key, func) {
