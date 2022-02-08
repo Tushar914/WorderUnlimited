@@ -6,15 +6,65 @@ body {
     background-size: cover;
 }
 
-table.tb-fixed {
+.keyboard-btn-letter {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    background-color: rgb(51, 67, 102);
+}
+
+.keyboard-btn-letter:hover {
+    cursor: pointer;
+    transition: .2s ease;
+    background-color: rgb(38, 47, 65);
+}
+
+.keyboard-btn-enter {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    background-color: rgb(56, 143, 45);
+}
+
+.keyboard-btn-enter:hover {
+    cursor: pointer;
+    transition: .2s ease;
+    background-color: rgb(55, 88, 45);
+}
+
+.keyboard-btn-remove {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    background-color: rgb(175, 80, 52);
+}
+
+.keyboard-btn-remove:hover {
+    cursor: pointer;
+    transition: .2s ease;
+    background-color: rgb(124, 67, 49);
+}
+
+table.tb-fixed,
+table.tb-keyboard {
     margin-left: auto;
     margin-right: auto;
 }
 
-th,
-td {
+table.tb-keyboard {
+    margin-top: 50px;
+}
+
+table.tb-keyboard td {
     height: 64px;
     width: 64px;
+    border: 1px solid rgb(197, 197, 197);
+}
+
+table.tb-fixed th,
+td {
+    height: 92px;
+    width: 92px;
     border-collapse: collapse;
     border: 2px solid rgb(68, 67, 67);
 }

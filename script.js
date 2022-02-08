@@ -36,7 +36,6 @@ async function fetchText() {
 
 function insertLetterInColumn(key, func) {
     let letter = document.getElementsByClassName('letter');
-    let messageBox = document.getElementById("message-box");
 
     if (func == 'submit') {
         if (tdColumnCount != 5) {
@@ -56,7 +55,7 @@ function insertLetterInColumn(key, func) {
         }
     }
 
-    if (func == 'valid') {
+    if (func == 'insert') {
         if (tdColumnCount < 5) {
             letter[tdTotalCount].innerHTML = key.toUpperCase();
             currentWord += key.toLowerCase();
@@ -81,7 +80,7 @@ function verifyWord(letterArray, currentWord) {
         showSnackbar('Congrats! You guessed it.', 'show-success');
         gameOver = true;
     } else if (tdTotalCount == 30) {
-        showSnackbar('You lost! The secret word is <strong>' + secretWord.toUpperCase() + '<strong>', 'show-danger');
+        showSnackbar('You lost! The secret word is <strong>' + secretWord.toUpperCase() + '<strong>', 'show-danger', 15000);
         gameOver = true;
     }
 
@@ -99,11 +98,27 @@ function verifyWord(letterArray, currentWord) {
     }
 }
 
-function showSnackbar(err, sbClass) {
+function showSnackbar(err, sbClass, duration = 3000) {
     var snackbar = document.getElementById("snackbar");
     snackbar.innerHTML = err;
     snackbar.className = sbClass;
-    setTimeout(function() { snackbar.className = snackbar.className.replace(sbClass, ""); }, 3000);
+    setTimeout(function() { snackbar.className = snackbar.className.replace(sbClass, ""); }, duration);
+}
+
+window.onclick = e => {
+    if (!gameOver) {
+        if (e.target.classList.contains('keyboard-btn-letter')) {
+            insertLetterInColumn(e.target.innerHTML, 'insert');
+        }
+
+        if (e.target.classList.contains('keyboard-btn-enter')) {
+            insertLetterInColumn(e.target.innerHTML, 'submit');
+        }
+
+        if (e.target.classList.contains('keyboard-btn-remove')) {
+            insertLetterInColumn(e.target.innerHTML, 'remove');
+        }
+    }
 }
 
 fetchText();
@@ -112,7 +127,7 @@ window.addEventListener("keydown", function(e) {
     //tested in IE/Chrome/Firefox
     if (!gameOver) {
         if ((e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 97 && e.keyCode <= 122))
-            insertLetterInColumn(e.key, 'valid')
+            insertLetterInColumn(e.key, 'insert')
 
         if (e.keyCode == 13)
             insertLetterInColumn(e.key, 'submit')
